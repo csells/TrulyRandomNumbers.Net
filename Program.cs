@@ -15,15 +15,19 @@ namespace RandomOrg {
       MainAsync(args).GetAwaiter().GetResult();
     }
 
-    static async Task MainAsync(string[] args = null) {
-      var data = await GetTrulyRandomNumbers(10, 1, 10);
+    static async Task MainAsync(string[] args) {
+      if( args.Length != 1) {
+        Console.WriteLine("Usage: RandomOrg api-key\r\nYou can get an API Key from https://api.random.org/api-keys");
+        return;
+      }
+
+      var data = await GetTrulyRandomNumbers(args[0], 10, 1, 10);
       Console.WriteLine($"truly random numbers: {string.Join(',', data)}");
     }
 
-    static async Task<IEnumerable<int>> GetTrulyRandomNumbers(int n, int min, int max) {
+    static async Task<IEnumerable<int>> GetTrulyRandomNumbers(string apiKey, int n, int min, int max) {
       // from https://api.random.org/json-rpc/1/introduction
       var url = "https://api.random.org/json-rpc/1/invoke";
-      var apiKey = "409388d9-fa18-426e-84d3-5a1b24539cb0";
       using (var client = new HttpClient()) {
         var req = JsonConvert.SerializeObject(
           new {
